@@ -1,0 +1,329 @@
+\documentclass[handout,xcolor=dvipsnames]{beamer}
+
+\usepackage[utf8x]{inputenc}
+\usepackage{default}
+\usetheme[width=50pt]{ULatina}   % Bergen, Darmstadt
+\usecolortheme[named=Green]{structure}
+\usepackage{graphicx}
+\usepackage{pgfpages}
+\usepackage{tikz}
+\usepackage[spanish]{babel}
+
+\newcommand{\uC}{\ensuremath{\mu\textrm{C}}\ }
+\newcommand{\uP}{\ensuremath{\mu\textrm{P}}\ }
+%\setbeameroption{handout}
+%\setbeameroption{show notes on second screen}
+
+\title[\uP]{Microprocesadores}
+\subtitle{Caracter\'\i sticas B\'asicas}
+\author{Prof. Jorge Rivera~Guti\'errez}
+\institute{Universidad Latina de Costa Rica\\ Ingenier\'\i a en Electr\'onica}
+\logo{\includegraphics[height=45pt]{world.png}}
+\newcommand{\pageframe}[1]{\frame{\begin{center}{ \Huge #1 }\end{center}}}
+
+
+\begin{document}
+
+\begin{frame}
+ \maketitle
+\end{frame}
+
+\begin{frame}
+ \tableofcontents
+\end{frame}
+
+\section{Repaso de Arquitectura}
+
+\begin{frame}[t]
+  \frametitle{Definición}
+  \begin{center}
+    ~\vfill~\\
+    \Huge ¿Qué es arquitectura de computadores?\\
+    ~\vfill~\\
+  \end{center}
+
+\end{frame}
+\subsection{Arquitectura}
+\begin{frame}[t]
+  \frametitle{Definición}
+
+  \only<1->{
+  \begin{block}{Arquitectura de Instrucciones, ISA}
+    La porción de la computadora que es visible al progamador o quien escribe un compilador.
+    \note<1>[item]{Clase: registros de propósito general (registro-memoria o load-store).}
+    \note<1>[item]{Direccionamiento de memoria: por bytes. Alineamiento.}
+    \note<1>[item]{Modos de direcc: registro, inmediato, desplazamiento}
+    \note<1>[item]{Tipos y tamaños de operandos}
+    \note<1>[item]{Operaciones: transf, aritméticas, lógicas, control, floatp...}
+    \note<1>[item]{Instrucciones de Control de flujo: cond/uncond branch, calls, return}
+    \note<1>[item]{Codificación: fixed-len vs variable}
+  \end{block}}
+  \only<2->{\begin{block}{Organización}
+    La forma en que los componentes de hardware se conectan para formar un sistema computacional. 
+    \note<2>[item]{Conexión externa de la memoria}
+    \note<2>[item]{Forma en que se ejecuta cada instrucción internamente}
+    \note<2>[item]{AMD Opteron 64 vs Intel Pentium 4}
+    \note<2>[item]{Pipeline, cache, etc.}
+  \end{block}}
+  \only<3->{\begin{block}{Diseño de Hardware}
+    Las partes específicas de la computadora: diseño lógico detallado y empaquetamiento de la tecnología de la computadora.
+    \note<3>[item]{Diseño y selección de componentes para una tarjeta madre}
+    \note<3>[item]{Ej: versión desktop vs móvil}
+  \end{block}}
+
+\end{frame}
+\subsection{Modelos de diseño}
+\pageframe{Modelos de diseño}
+
+\pageframe{Harvard}
+
+\begin{frame}[t]
+  \frametitle{Harvard}
+  \begin{block}{Descripción}
+   Utiliza memorias separadas para almacenar datos e instrucciones, cada una conectada a un bus distinto.
+  \end{block}
+  \only<2->{
+  \begin{exampleblock}{Esquema}
+   \centering\input{diagramas/1-harvard.tex}
+  \end{exampleblock}}
+ 
+\end{frame}
+
+\pageframe{von Neumann}
+
+\begin{frame}[t]
+  \frametitle{von Neumann}
+  \begin{block}{Descripción}
+   Utiliza una sola memoria física para almacenar datos e instrucciones.
+  \end{block}
+  \only<2->{
+  \begin{exampleblock}{Esquema}
+   \centering\input{diagramas/1-vonNeumann.tex}
+  \end{exampleblock}}
+\end{frame}
+
+
+\begin{frame}{Otros conceptos}
+  \begin{block}{Conceptos}
+   \begin{itemize}
+    \item<1-> Segmentada: se subdivide la memoria en segmentos, dentro de los cuales residen código, datos, pila, extras. También se refiere al uso de memoria ``protegida''.
+      \note<1->[item]{Divide la memoria en segmentos para ampliar la capacidad de memoria. 8086 16/16+4bits para ampliar la capacidad de memoria a 1MByte, pero se apuntan con registros de 16bits. El 286 (16/24) y 386 (32/32) amplían la memoria, pero conservan los modos de direccionamiento básicos.} 
+    \item<2-> Multi-etapa (pipeline). Ejecución de múltiples instrucciones simultáneamente al dividir las instrucciones en etapas.
+      \note<2->[item]{Se dividen las instrucciones en etapas (p. ej. instruction fetch, instruction decode and register fetch, execute, memory access, register write back) y se ejecutan instrucciones simultáneamente cuando es posible.}
+   \end{itemize}
+
+  \end{block}
+\end{frame}
+
+
+
+\subsection{Arquitectura de instrucciones}
+\begin{frame}{Definición}
+ \begin{block}{Arquitectura de instrucciones}
+  ISA (\textit{Instruction Set Architecture}) es la parte de la arquitectura relacionada a la programación, y que define los tipos de datos, las instrucciones, los registros, los modos de direccionamiento, el manejo de interrupciones, excepciones, entradas y salidas.
+ \end{block}
+
+\end{frame}
+\begin{frame}{CISC}
+  \begin{block}{Complex Instruction Set Computer}
+    \begin{itemize}
+      \item<1-> Cada instrucción puede ejecutar una o más operaciones de bajo nivel, como carga de memoria a registro, operaciones aritméticas, almacenamiento en memoria.
+	\note<1->[item]{Ejemplos: x86, 68k, PDP-11.}
+      \item<2-> Intenta cerrar la brecha semántica.
+	\note<2->[item]{Acercar el ensamblador a los lenguajes de alto nivel, haciéndolo más ``fácil'' para los programadores.}
+      \item<3-> Disminuye el tamaño de los programas.
+	\note<3->[item]{Muy importante en el tiempo del x86 original y otros procesadores CISC, donde la capacidad de almacenamiento y de memoria principal era muy reducida.}
+    \end{itemize} 
+
+  \end{block}
+
+ 
+\end{frame}
+
+\begin{frame}{RISC}
+  \begin{block}{Reduced Instruction Set Computer}
+   \begin{itemize}
+    \item<1-> Las instrucciones son reducidas, realizan un número limitado de operaciones de bajo nivel.
+      \note<1->[item]{No se refiere a un conjunto reducido, sino a instrucciones reducidas.}
+    \item<2-> Modos de direccionamiento sencillo.
+    \item<3-> Registros de propósito general.
+    \item<4-> Pocos tipos de datos en hardware.
+      \note<4->[item]{Algunos CISC tienen manejo de byte string o de números complejos, RISC no.}
+      \note<4->[item]{ARM (GBA, DSi, iPod, etc), PPC, MIPS, SPARC, SuperH, AVR}
+   \end{itemize}
+  \end{block} 
+\end{frame}
+
+\section[$\mu C$]{Microcontroladores}
+
+\begin{frame}
+   \frametitle{Microcontroladores}
+  \only<1>{\begin{center}
+	      ~\vfill~\\
+	      \Huge ¿Qué son los microcontroladores?\\
+	      ~\vfill~\\
+           \end{center}}
+
+\end{frame}
+
+
+\subsection{Descripción}
+\pageframe{Descripción}
+\begin{frame}[t]
+  \frametitle{Características}
+  \begin{block}{}
+    \begin{itemize}[<+->]
+      \item Recursos de entrada/salida \note<+->[item]{I/O, periféricos específicos, ADC, etc}
+      \item Espacio optimizado \note<+->[item]{número de terminales, encapsulado}
+      \item \uC idóneos: familias grandes con miles de opciones para escoger la que mejor se amolda
+      \item Seguridad en el funcionamiento \note<+->[item]{WDT, etc}
+      \item Bajo consumo \note<+->[item]{fuente de alimentación: batería}
+      \item Protección de los programas \note<+->[item]{read protect}
+    \end{itemize}
+
+  \end{block}
+ 
+\end{frame}
+\begin{frame}[t]
+  \frametitle{Ventajas}
+  \only<1>{\begin{center}
+	      ~\vfill~\\
+	      \Huge ¿Qué ventajas ofrecen los microcontroladores?\\
+	      \note{Preguntar a los estudiantes}
+	      ~\vfill~\\
+           \end{center}}
+
+\end{frame}
+
+\begin{frame}{¿Dónde encontramos microcontroladores?}
+  \begin{block}{Consumo}
+    \begin{itemize}
+    \item Televisión, DVD, VCR, Cable, DVR
+    \item PDAs, Celulares, Cámaras, GPS, Reproductores
+    \item Electrodomésticos inteligentes
+    \item Juguetes
+    \end{itemize}
+  \end{block}
+
+  \begin{columns}[t]
+    \column{.45\textwidth}
+      \begin{block}{Automóviles}
+       \begin{itemize}
+        \item Inyección electrónica
+	\item Frenos
+	\item Control de vidrios
+	\item Control de asientos
+       \end{itemize}
+      \end{block}
+    \column{.45\textwidth}
+      \begin{block}{Otros campos}
+       \begin{itemize}
+        \item Medicina
+	\item Control industrial
+	\item Redes
+	\item Equipo de oficina
+       \end{itemize}
+      \end{block}
+  \end{columns}
+
+  \note{Negocio que mueve \$12.3b}
+ 
+\end{frame}
+
+
+\subsection{Periféricos}
+\pageframe{Periféricos}
+\pageframe{Periféricos:\\~\\GPIO}
+\begin{frame}[t]
+  \frametitle{Puertos de I/O}
+
+  \begin{block}{GPIO}
+    \begin{itemize}[<+->]
+      \item GPIO (\textit{General purpose input/output})
+      \item Son pines que no tienen un propósito específico
+	\note<+->[item]{Opuesto a los específicos como acceso a periféricos (ADC, PWM, comm)}
+      \item Niveles de voltaje variables, acordes al \uC
+      \item Dirección configurable
+      \item Presentes en \uC y otros chips de propósito específico
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\pageframe{Periféricos:\\~\\ADC}
+\begin{frame}[t]
+  \frametitle{Convertidor Analógico a Digital}
+  \begin{block}{ADC}
+    \begin{itemize}[<+->]
+      \item ADC (\textit{Analog-to-Digital Converter})
+      \item Convierte un valor continuo en uno discreto.
+    \end{itemize}
+  \end{block}
+  \begin{block}{Consideraciones}
+    \begin{itemize}[<+->]
+      \item Rango de valores digitales.
+      \item Velocidad de muestreo.
+      \item Número de canales.
+      \item Canales independientes o multiplexados.
+      \item Referencias: internas, externas, configurables.
+    \end{itemize}
+
+  \end{block}
+
+\end{frame}
+
+
+\pageframe{Periféricos:\\~\\PWM}
+\begin{frame}[t]
+  \frametitle{Modulador de ancho de pulso}
+  \begin{block}{PWM}
+    \begin{itemize}[<+->]
+      \item PWM (\textit{Pulse-width Modulation})
+      \item Genera una señal rectangular con un ancho de pulso proporcional a una variable provista.
+    \end{itemize}
+
+
+  \end{block}
+  \begin{block}{Consideraciones}
+    \begin{itemize}[<+->]
+      \item Rango de valores digitales.
+      \item Frecuencia de la señal. 
+      \item Número de canales.
+      \item Potencia de la señal de salida.
+    \end{itemize}
+
+  \end{block}
+ 
+\end{frame}
+
+\pageframe{Periféricos:\\~\\Comunicación}
+
+\begin{frame}[t]
+  \frametitle{Puertos de comunicación}
+  \begin{block}{Comunicación}
+    \begin{itemize}[<+->]
+      \item Serial (RS-232, RS-485, )
+	\note<.>[item]{}
+      \item Paralelo
+      \item I$^2$C, I$^2$S, SPI
+      \item USB
+    \end{itemize}
+
+  \end{block}
+  \begin{block}{Consideraciones}
+    \begin{itemize}[<+->]
+      \item Niveles de tensión.
+	\note<.->[item]{Representación de 1s y 0s, diferencial vs. single-ended}
+      \item Simetría, dirección y canales
+	\note<.->[item]{Maestro, multi-maestro, esclavo.}
+	\note<.->[item]{simplex, half-duplex, full-duplex}
+      \item Sincronía
+	\note<.->[item]{Síncrono, asíncrono}
+      \item Buffers
+	\note<.->[item]{tamaño, número, forma de uso}
+    \end{itemize}
+
+  \end{block}
+ 
+\end{frame}
+
+\end{document}
